@@ -1,0 +1,219 @@
+package show;
+
+public class Course {
+public String  CourseName = "";
+public int CourseNumber;
+public Course next;
+public int CreditHours;
+public boolean InMajor;
+public char[] Day;//which day have class
+public double StartTime;
+public double EndTime;
+public String Describe;
+public Course (String coursename,int coursenumber,int credit,boolean inmajor,String day,double starttime,double endtime,String describe)
+{
+	 CourseName = coursename;
+	 CourseNumber = coursenumber;
+	 CreditHours = credit;
+	 InMajor = inmajor;
+	 Day = day.toCharArray();
+	 StartTime = starttime;
+	 EndTime = endtime;
+	 next = null;
+	 Describe = describe;
+}
+public void addcourse(Course I,String coursename,int coursenumber,int credit,boolean inmajor,String day,double starttime,double endtime,String describe)
+{
+	
+	
+	if (!timeconflict(day,starttime,endtime))
+	{
+		TextIO.putln("Time conflict please select course with other time");
+		return;
+		
+	}
+	
+	
+	if (next == null)
+	this.next=new Course(coursename,coursenumber,credit,inmajor,day,starttime,endtime,describe);
+	else 
+		next.addcourse(I, coursename, coursenumber, credit, inmajor, day, starttime, endtime, describe);
+		
+}
+public void addcourse(Course a){
+	if (next == null)
+		this.next=a;
+		else 
+		next.addcourse(a);
+	
+	
+	
+}
+public Course removecourse(String a, int b,Course I){
+	
+	if(I.CourseName.equalsIgnoreCase(a) && I.CourseNumber ==b)
+		I = next;
+	else if(next != null)
+	I.next = I.next.removecourse(a, b, I.next);
+	return I;
+	
+	
+}
+public boolean timeconflict(String day,double starttime,double endtime)
+{
+	boolean a = true;
+	for(int i=0;i<Day.length;i++)
+	{
+		if(day.indexOf(this.Day[i])>=0)
+		{
+			if(starttime>StartTime && starttime<EndTime)
+				a = false;
+			else if(endtime<EndTime && endtime>StartTime)
+				a = false;
+			else if(endtime == EndTime && starttime == StartTime)
+				a = false;
+		}
+	}
+	if (next==null)
+		return a;
+	if (a == false)
+		return false;	
+	return next.timeconflict(day, starttime, endtime);
+}
+public int totalcredit(){
+	if(next==null)
+		return this.CreditHours;
+	return (this.CreditHours + next.totalcredit());
+	
+}
+public void  printInfo(){
+	TextIO.putln(""+CourseName+""+CourseNumber);
+	TextIO.putln("Coursedescription :" + Describe);
+	TextIO.putln("CreditHours : "+CreditHours);
+	TextIO.putln("Major required :"+InMajor);
+	TextIO.putln("The class is on "+ new String(Day));
+	TextIO.putln("From: " + StartTime + " to "+EndTime);
+	
+}
+
+public void display(){
+	this.printInfo();
+	if(this.InMajor)
+	TextIO.putln("*");
+	TextIO.putln();
+	if(next == null)
+	{
+		return;
+	}
+	else
+	{
+	next.display();	
+	}
+	}
+
+public void displaymajor(){
+	if (InMajor)
+		{this.printInfo();
+		TextIO.putln();}
+	if(next == null)
+		return;
+	else
+		next.displaymajor();
+	
+	
+}
+
+public Course sort(Course I)
+	{
+	Course temp1 = I;
+	Course temp = I;
+	if(next != null)
+	{
+		Course sorted = next.sort(I.next);
+		temp1.next = sorted;
+		if (I.CourseName.compareTo(sorted.CourseName)>0)
+			{temp.next = null;
+			 sorted.addcourse(temp);
+			temp1 = sorted.sort(sorted);			
+			}
+		else if(I.CourseName.compareTo(sorted.CourseName)==0 && I.CourseNumber > sorted.CourseNumber)
+		{
+			temp.next = null;
+			 sorted.addcourse(temp);
+			temp1 = sorted.sort(sorted);			
+		}
+		
+	}
+	
+	return temp1;
+	
+	}
+public Course getsmall(Course I)
+{
+	Course temp = I;
+	if(next != null)
+	{
+		Course future = next.getsmall(I.next);
+		if (I.CourseName.compareTo(future.CourseName)>0)
+			temp = future;
+		else if(I.CourseName.compareTo(future.CourseName)==0 && I.CourseNumber < future.CourseNumber)
+			temp = future;
+	}
+	return temp;
+}	
+public double earliestTime(char m){
+	double temp = 99;
+	if(this.isOntheDay(m))
+		{this.StartTime = temp;
+		if(next != null)
+		{
+		double ls = next.earliestTime(m);
+		if(ls < temp)
+			temp = ls;
+		}
+		}
+	else if (next!=null)
+		return next.earliestTime(m);
+		return temp;
+}
+public boolean isOntheDay(char m){
+	for(int i = 0 ; i<Day.length ; i++)
+		if ( Day[i]==m )
+			return true;
+	return false;	
+}
+public Course sortbydate(Course I)
+{
+	Course temp1 = I;
+	Course temp = I;
+	if(next != null)
+	{
+		Course sorted = next.sort(I.next);
+		temp1.next = sorted;
+		if (I.StartTime > sorted.StartTime)
+			{temp.next = null;
+			 sorted.addcourse(temp);
+			temp1 = sorted.sortbydate(sorted);			
+			}
+	}
+	
+	return temp1;
+	}	
+
+public void schedule(char m){
+	if (this.isOntheDay(m))
+		this.printInfo();
+	if(next == null)
+		return;
+	else
+		next.schedule(m);
+}
+}
+	
+	
+
+	
+
+	
+
+

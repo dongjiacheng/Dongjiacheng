@@ -1,0 +1,66 @@
+package show;
+
+public class courseschedule {
+public static void main(String[] args){
+	TextIO.putln("Welcome to the Course Scheduler!  Select an option below:");
+	Course I = null;
+	while (true){
+	TextIO.putln();
+	TextIO.putln("1) add an course");
+	TextIO.putln("2) remove an course");
+	TextIO.putln("3) display courses alphabetically");
+	TextIO.putln("4) display courses in major");
+	TextIO.putln("5) display schedule for day");
+	TextIO.putln("6) display total number of credit hours");
+	TextIO.putln("7) quit");
+	TextIO.putln();
+	TextIO.putln("select an option above :");
+	int a = TextIO.getlnInt();
+	if(a==7)
+	{	TextIO.putln("Are you sure you want to quit? - all your data will be loss");
+		boolean quit =TextIO.getlnBoolean();
+		if(quit)
+		return;
+		else;}
+	if(a==1)
+	{
+		TextIO.putln("please enter course information as following sequence");
+		TextIO.putln("-course name");
+		TextIO.putln("-course number");
+		TextIO.putln("-credit hours");
+		TextIO.putln("-Is in your major(true or false)");
+		TextIO.putln("-days course are in weekdays");
+		TextIO.putln("-start time");
+		TextIO.putln("-end time");
+		TextIO.putln("-course description");
+		if (I==null)
+			I = new Course(TextIO.getlnString().toUpperCase(), TextIO.getlnInt(), TextIO.getlnInt(), TextIO.getlnBoolean(), TextIO.getlnString().toUpperCase(), TextIO.getlnDouble(), TextIO.getlnDouble(),TextIO.getlnString() );
+		else 
+			I.addcourse(I,TextIO.getlnString().toUpperCase(), TextIO.getlnInt(), TextIO.getlnInt(), TextIO.getlnBoolean(), TextIO.getlnString().toUpperCase(), TextIO.getlnDouble(), TextIO.getlnDouble(),TextIO.getlnString());
+		
+	}
+	if( a==6 )
+		TextIO.putln(I.totalcredit());
+	if( a==3 )
+		{
+		I = I.sort(I);
+		I.display();
+		}
+	if( a==2 )
+		{TextIO.putln("input the name of your course and course number");
+		I = I.removecourse(TextIO.getlnString(), TextIO.getlnInt(), I);}
+	if( a==4 )
+	{
+		I = I.sort(I);
+		I.displaymajor();
+	}
+	if( a==5 )
+		{
+		I = I.sortbydate(I);
+		TextIO.putln("input the day you want to see schedule");
+		I.schedule(Character.toUpperCase(TextIO.getlnChar() ));
+		}
+}
+}
+}
+
